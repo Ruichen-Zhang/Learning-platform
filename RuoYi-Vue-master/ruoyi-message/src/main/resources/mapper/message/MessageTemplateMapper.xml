@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.message.mapper.MessageTemplateMapper">
+
+    <resultMap type="MessageTemplate" id="MessageTemplateResult">
+        <result property="id"    column="id"    />
+        <result property="messagetemplatename"    column="messagetemplatename"    />
+        <result property="templateownerid"    column="templateownerid"    />
+        <result property="consumerid"    column="consumerid"    />
+        <result property="messagecontent"    column="messagecontent"    />
+        <result property="consumerjudge"    column="consumerjudge"    />
+        <result property="messagelink"    column="messagelink"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectMessageTemplateVo">
+        select id, messagetemplatename, templateownerid, consumerid, messagecontent, consumerjudge, messagelink, del_flag from MessageTemplate
+    </sql>
+
+    <select id="selectMessageTemplateList" parameterType="MessageTemplate" resultMap="MessageTemplateResult">
+        <include refid="selectMessageTemplateVo"/>
+        <where>
+            <if test="messagetemplatename != null  and messagetemplatename != ''"> and messagetemplatename like concat('%', #{messagetemplatename}, '%')</if>
+            <if test="templateownerid != null "> and templateownerid = #{templateownerid}</if> and 2 > del_flag
+        </where>
+    </select>
+
+    <select id="selectMessageTemplateById" parameterType="Integer" resultMap="MessageTemplateResult">
+        <include refid="selectMessageTemplateVo"/>
+        where id = #{id} and 2 > del_flag
+    </select>
+
+    <insert id="insertMessageTemplate" parameterType="MessageTemplate" useGeneratedKeys="true" keyProperty="id">
+        insert into MessageTemplate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="messagetemplatename != null and messagetemplatename != ''">messagetemplatename,</if>
+            <if test="templateownerid != null">templateownerid,</if>
+            <if test="consumerid != null">consumerid,</if>
+            <if test="messagecontent != null">messagecontent,</if>
+            <if test="consumerjudge != null">consumerjudge,</if>
+            <if test="messagelink != null">messagelink,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="messagetemplatename != null and messagetemplatename != ''">#{messagetemplatename},</if>
+            <if test="templateownerid != null">#{templateownerid},</if>
+            <if test="consumerid != null">#{consumerid},</if>
+            <if test="messagecontent != null">#{messagecontent},</if>
+            <if test="consumerjudge != null">#{consumerjudge},</if>
+            <if test="messagelink != null">#{messagelink},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMessageTemplate" parameterType="MessageTemplate">
+        update MessageTemplate
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="messagetemplatename != null and messagetemplatename != ''">messagetemplatename = #{messagetemplatename},</if>
+            <if test="templateownerid != null">templateownerid = #{templateownerid},</if>
+            <if test="consumerid != null">consumerid = #{consumerid},</if>
+            <if test="messagecontent != null">messagecontent = #{messagecontent},</if>
+            <if test="consumerjudge != null">consumerjudge = #{consumerjudge},</if>
+            <if test="messagelink != null">messagelink = #{messagelink},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+
+
+    <update id="deleteMessageTemplateById" parameterType="Long">
+        update MessageTemplate
+        <set>
+            del_flag = 2,
+        </set>
+        where id = #{id}
+    </update>
+
+
+
+    <update id="deleteMessageTemplateByIds" parameterType="Long">
+        update MessageTemplate
+        <set>
+            del_flag = 2,
+        </set>
+        where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="selectByid" resultMap="MessageTemplateResult">
+        <include refid="selectMessageTemplateVo"/>
+
+        where id = #{id} and 2 > del_flag
+    </select>
+
+</mapper>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.message.mapper.ConsumerMessageMapper">
+
+    <resultMap type="ConsumerMessage" id="ConsumerMessageResult">
+        <result property="id"    column="id"    />
+        <result property="producerid"    column="producerid"    />
+        <result property="consumerid"    column="consumerid"    />
+        <result property="messagecontent"    column="messagecontent"    />
+        <result property="producerdate"    column="producerdate"    />
+        <result property="readjudge"    column="readjudge"    />
+        <result property="messagelink"    column="messagelink"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="readtime"    column="readtime"    />
+    </resultMap>
+
+    <sql id="selectConsumerMessageVo">
+        select id, producerid, consumerid, messagecontent, producerdate, readjudge, messagelink, del_flag ,readtime from ConsumerMessage
+    </sql>
+
+    <select id="selectConsumerMessageList" parameterType="ConsumerMessage" resultMap="ConsumerMessageResult">
+        <include refid="selectConsumerMessageVo"/>
+        <where>
+            <if test="producerid != null "> and producerid = #{producerid}</if>
+            <if test="consumerid != null "> and consumerid = #{consumerid}</if>
+            <if test="producerdate != null "> and producerdate &gt;= #{producerdate}</if>
+            <if test="readjudge != null "> and readjudge = #{readjudge}</if>
+            and 2 > del_flag
+        </where>
+    </select>
+
+    <select id="selectConsumerMessageById" parameterType="Integer" resultMap="ConsumerMessageResult">
+        <include refid="selectConsumerMessageVo"/>
+        where id = #{id} and 2 > del_flag
+    </select>
+
+    <insert id="insertConsumerMessage" parameterType="ConsumerMessage" useGeneratedKeys="true" keyProperty="id">
+        insert into ConsumerMessage
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="producerid != null">producerid,</if>
+            <if test="consumerid != null">consumerid,</if>
+            <if test="messagecontent != null">messagecontent,</if>
+            <if test="producerdate != null">producerdate,</if>
+            <if test="readjudge != null">readjudge,</if>
+            <if test="messagelink != null">messagelink,</if>
+
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="producerid != null">#{producerid},</if>
+            <if test="consumerid != null">#{consumerid},</if>
+            <if test="messagecontent != null">#{messagecontent},</if>
+            <if test="producerdate != null">#{producerdate},</if>
+            <if test="readjudge != null">#{readjudge},</if>
+            <if test="messagelink != null">#{messagelink},</if>
+
+         </trim>
+    </insert>
+
+    <update id="updateConsumerMessage" parameterType="ConsumerMessage">
+        update ConsumerMessage
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="producerid != null">producerid = #{producerid},</if>
+            <if test="consumerid != null">consumerid = #{consumerid},</if>
+            <if test="messagecontent != null">messagecontent = #{messagecontent},</if>
+            <if test="producerdate != null">producerdate = #{producerdate},</if>
+            <if test="readjudge != null">readjudge = #{readjudge},</if>
+            <if test="messagelink != null">messagelink = #{messagelink},</if>
+        </trim>
+        where id = #{id} and 2 > del_flag
+    </update>
+
+
+    <update id="deleteConsumerMessageById" parameterType="Long">
+        update ConsumerMessage
+        <set>
+            del_flag = 2,
+        </set>
+        where id = #{id}
+    </update>
+
+
+
+    <update id="deleteConsumerMessageByIds" parameterType="Long">
+        update ConsumerMessage
+        <set>
+            del_flag = 2,
+        </set>
+        where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <insert id="insert" parameterType="com.ruoyi.message.domain.ConsumerMessage">
+        insert into ConsumerMessage
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="producerid != null">
+                producerid,
+            </if>
+            <if test="consumerid != null">
+                consumerid,
+            </if>
+            messagecontent,
+            <if test="producerdate != null">
+                producerdate,
+            </if>
+            <if test="readjudge != null">
+                readjudge,
+            </if>
+            messagelink,
+
+        </trim>
+        <trim prefix=" values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="producerid != null">
+                #{producerid},
+            </if>
+            <if test="consumerid != null">
+                #{consumerid},
+            </if>
+            #{messagecontent},
+            <if test="producerdate != null">
+                #{producerdate},
+            </if>
+            <if test="readjudge != null">
+                #{readjudge},
+            </if>
+            #{messagelink},
+
+        </trim>
+    </insert>
+
+    <update id="updateread" parameterType="com.ruoyi.message.domain.ConsumerMessage">
+        update ConsumerMessage
+        <set>
+
+            <if test="readjudge != null">
+                readjudge = #{readjudge},
+            </if>
+            <if test="readtime != null">
+                readtime = #{readtime},
+            </if>
+
+        </set>
+        where id = #{id} and 2 > del_flag and  1 > readjudge
+    </update>
+</mapper>

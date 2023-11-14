@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.message.mapper.ProducerMessageMapper">
+
+    <resultMap type="ProducerMessage" id="ProducerMessageResult">
+        <result property="id"    column="id"    />
+        <result property="producerid"    column="producerid"    />
+        <result property="consumerid"    column="consumerid"    />
+        <result property="messagecontent"    column="messagecontent"    />
+        <result property="consumerjudge"    column="consumerjudge"    />
+        <result property="producerdate"    column="producerdate"    />
+        <result property="messagelink"    column="messagelink"    />
+        <result property="send"    column="send"    />
+        <result property="senddate"    column="senddate"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectProducerMessageVo">
+        select id, producerid, consumerid, messagecontent, consumerjudge, producerdate, messagelink, send, senddate, del_flag from ProducerMessage
+    </sql>
+
+    <select id="selectProducerMessageList" parameterType="ProducerMessage" resultMap="ProducerMessageResult">
+        <include refid="selectProducerMessageVo"/>
+        <where>
+            <if test="producerid != null "> and producerid = #{producerid}</if>
+            <if test="consumerid != null "> and consumerid = #{consumerid}</if>
+            <if test="consumerjudge != null "> and consumerjudge = #{consumerjudge}</if>
+            <if test="producerdate != null "> and producerdate &gt;= #{producerdate}</if>
+            <if test="send != null "> and send = #{send}</if> and 2 > del_flag
+        </where>
+    </select>
+
+    <select id="selectProducerMessageById" parameterType="Integer" resultMap="ProducerMessageResult">
+        <include refid="selectProducerMessageVo"/>
+        where id = #{id} and 2 > del_flag
+    </select>
+
+    <insert id="insertProducerMessage" parameterType="ProducerMessage" useGeneratedKeys="true" keyProperty="id">
+        insert into ProducerMessage
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="producerid != null">producerid,</if>
+            <if test="consumerid != null">consumerid,</if>
+            <if test="messagecontent != null">messagecontent,</if>
+            <if test="consumerjudge != null">consumerjudge,</if>
+            <if test="producerdate != null">producerdate,</if>
+            <if test="messagelink != null">messagelink,</if>
+            <if test="send != null">send,</if>
+            <if test="senddate != null">senddate,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="producerid != null">#{producerid},</if>
+            <if test="consumerid != null">#{consumerid},</if>
+            <if test="messagecontent != null">#{messagecontent},</if>
+            <if test="consumerjudge != null">#{consumerjudge},</if>
+            <if test="producerdate != null">#{producerdate},</if>
+            <if test="messagelink != null">#{messagelink},</if>
+            <if test="send != null">#{send},</if>
+            <if test="senddate != null">#{senddate},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProducerMessage" parameterType="ProducerMessage">
+        update ProducerMessage
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="producerid != null">producerid = #{producerid},</if>
+            <if test="consumerid != null">consumerid = #{consumerid},</if>
+            <if test="messagecontent != null">messagecontent = #{messagecontent},</if>
+            <if test="consumerjudge != null">consumerjudge = #{consumerjudge},</if>
+            <if test="producerdate != null">producerdate = #{producerdate},</if>
+            <if test="messagelink != null">messagelink = #{messagelink},</if>
+            <if test="send != null">send = #{send},</if>
+            <if test="senddate != null">senddate = #{senddate},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+
+
+
+    <update id="deleteProducerMessageById" parameterType="Long">
+        update ProducerMessage
+        <set>
+            del_flag = 2,
+        </set>
+        where id = #{id}
+    </update>
+
+
+
+    <update id="deleteProducerMessageByIds" parameterType="Long">
+        update ProducerMessage
+        <set>
+            del_flag = 2,
+        </set>
+        where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+
+    <update id="updatesend" parameterType="ProducerMessage">
+        update ProducerMessage
+        <set>
+            send = 1,
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="selectunsend" resultMap="ProducerMessageResult">
+        <include refid="selectProducerMessageVo"/>
+
+        where send = #{arg0} and #{arg1} >= senddate
+    </select>
+</mapper>
